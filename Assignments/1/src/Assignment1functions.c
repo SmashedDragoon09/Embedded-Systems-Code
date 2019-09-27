@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "Assignment1functions.h"
+
+//Gives user a basic start menu and prompts for an input
 int StartMenu() {
 
     int input = 0;
@@ -13,6 +15,7 @@ int StartMenu() {
     scanf("%d", &input);
     //printf("%d", input);
 
+    //switch statement to determine the input user provided
     switch(input) {
 
         case 1:
@@ -23,10 +26,12 @@ int StartMenu() {
             return 1;
             break;
         case 2:
+            //chose instructions
             printf("\nInstructions\n");
             return 2;
             break;
         case 3:
+            //end the game
             printf("\nEnd Game\n");
             return 3;
             break;

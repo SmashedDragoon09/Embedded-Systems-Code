@@ -1,1 +1,2 @@
 int StartMenu();
+void GameStart();
