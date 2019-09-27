@@ -1,34 +1,20 @@
-#include <stdio.h>
-#include <ctype.h>
+#include "Assignment1functions.h"
 
-int main() {
 
-    int input = 0;
-
-    printf("Welcome to Oregon Trail!");
-    printf("\nTo start the game    Press '1'");
-    printf("\nTo view instructions Press '2'");
-    printf("\nTo exit the game     Press '3'.\n");
-
-    scanf("%d", &input);
-    //printf("%d", input);
-
-    switch(input) {
-
-        case 1:
-            printf("\nStart Game\n");
-            return 0;
-            break;
-        case 2:
-            printf("\nInstructions\n");
-            return 0;
-            break;
-        case 3:
-            printf("\nEnd Game\n");
-            return 0;
-            break;
+int main() { 
+    //promts the user input what they want to do
+    int mode = StartMenu();
+    if(mode == 1) {
+        //call stat of game function
     }
+    else if(mode == 2) {
+        //call instruction method
+        
+    }
+    else if(mode == 3) {
+        //end game
 
-    
+        return 0;
+    }
     return 0;
 }
