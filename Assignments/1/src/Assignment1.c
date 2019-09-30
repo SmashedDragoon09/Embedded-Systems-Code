@@ -6,6 +6,7 @@ int main() {
     int mode = StartMenu();
     if(mode == 1) {
         //call stat of game function
+        GameStart();
     }
     else if(mode == 2) {
         //call instruction method
