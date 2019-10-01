@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 int StartMenu();
-void GameStart();
-void LoadMap(int num);
+void GameStart(char *fileName);
+void LoadMap(char *fileName);
 int numOfLines(FILE *filename);
+void printCurrentLocation(); //TODO implement a method to print current location in a 3x3 matrix

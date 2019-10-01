@@ -2,10 +2,46 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "Assignment1functions.h"
 
-// Function for finding the array length
-int numOfLines(FILE *mapData) {  
+
+typedef struct location {
+    char data;
+    int x_pos;
+    int y_pos;
+    bool is_threat;
+    bool is_discorveed;
+    //struct Node *up, *down, *left, *right;
+
+
+} node_type;
+
+// struct node of linked list 
+// struct Node { 
+//     int data; 
+//     *right;
+//     *down;
+//     *left;
+//     *up; 
+// }; 
+
+
+//TODO: helper functions
+//AddNode
+//FreeNode
+
+struct LinkedList{
+    int data;
+
+    struct LinkedList *next;
+    struct LinkedList *start;   //need a pointer pointing toward the start node
+    struct LinkedList *end;     //need a pointer pointing toward the end node
+
+ };
+
+// Function for finding the matrixSize 
+int lineSize(FILE *mapData) {  
   int c, count;
   count = 0;
   for (;; ) {
@@ -21,77 +57,43 @@ int numOfLines(FILE *mapData) {
   return count;
 }
 
-void LoadMap(int num) {
-    char Filename[10] = {};
-    if(num == 1) {
-        strcpy(Filename, "map1.txt"); //abort trap:6 which means out of bound
-    }
-    else {
-        strcpy(Filename, "map2.txt");
-    }
+void LoadMap(char *fileName) {
     
     //printf("%s", Filename);
 
-    FILE *MapData;
-    MapData = fopen(Filename, "r" );
+    FILE* MapData = fopen(fileName, "r" );
     if (MapData == NULL){
         printf("Error! opening file");
         // Program exits if the file pointer returns NULL.
         exit(1);
     }
 
-    // Reading text file into 2D array
     int i,j;
     int health = 0;
-    int matrixSize = numOfLines(MapData) + 1;
-    char map [matrixSize][matrixSize];
+    int matrixSize = lineSize(MapData); //grabbing the size to allocate memory
+    printf("%d", matrixSize);
+    char *map;
+    map = malloc(matrixSize * sizeof(char) + 17); //dynamically allocating memory for the map 
 
+    printf("%s\n", map);
+    fscanf(MapData, "%s %d", map, &health); //grbbing the value of health
+    printf("Health: ");
     printf("%d\n", health);
 
-    for(i = 0;i < matrixSize; i++){
-            for(j = 0; j < matrixSize; j++){
-                fscanf(MapData, "%c", &map[i][j]);
-            }
-    }
 
-    for(i = 0; i < matrixSize; i++){
-        for(j = 0; j < matrixSize; j++){
-            printf("%c", map[i][j]);
-        }
-    }
 
-    //printf("%c", map[matrixSize][matrixSize - 1]);
 
-    fclose(MapData);
+
+    fclose(MapData); //closing the file
+}
+
+void printCurrentLocation() {
 
 }
 
-void GameStart() {
-    printf("\nChoose which map you wish you wish to choose\n"
-            "To choose Map 1 Press '1'\n"
-            "To choose Map 2 Press '2'\n");
-    int input = 0;
-    scanf("%d", &input);
-    //printf("%d", input);
-
-    //switch statement to determine the input user provided
-    switch(input) {
-        case 1:
-            //start game
-            printf ("You have chosen Map '1'"
-                    "\n Loading......\n");
-                    LoadMap(1);
-            break;
-        case 2:
-            //chose instructions
-            printf ("You have chosen Map '2'"
-                    "\n Loading......\n");
-                    LoadMap(2);
-            break;
-        default:
-            printf("\nThat's not a valid input, sorry you never learned how to read!\n\n\n");
-            break;
-    }
+void GameStart(char *fileName) {
+    printf("Loading Map.....\n");
+    LoadMap(fileName);
 }
 
 //Gives user a basic start menu and prompts for an input
@@ -109,12 +111,11 @@ int StartMenu() {
 
     //switch statement to determine the input user provided
     switch(input) {
-
         case 1:
             //start game
             printf ("Thank you for choosing to play Oregon Trail,"
                     "\nhave fun and be prepared!\n"
-                    "\nStarting Game.....\n");
+                    "\nStarting Game.....");
             return 1;
             break;
         case 2:
@@ -131,7 +132,6 @@ int StartMenu() {
             printf("\nThat's not a valid input, sorry you never learned how to read!\n\n\n");
             return 3;
             break;
-            
     }
     return 0;
 }
