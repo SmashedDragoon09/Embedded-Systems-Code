@@ -6,39 +6,64 @@
 #include "Assignment1functions.h"
 
 
-typedef struct location {
-    char data;
-    int x_pos;
-    int y_pos;
-    bool is_threat;
-    bool is_discorveed;
-    //struct Node *up, *down, *left, *right;
+typedef struct Node{ //defining the linked list
+    char tile;
+    int x_pos, y_pos;
+    enum type_threat { //enumerating all of the possible threat types
+        ANIMAL,
+        DISEASE,
+        RIVER,
+        NOTHING,
+        OCEAN
+    } type_threat;
 
+    // union threat { //creating a union called threat of animals and disease
+    //     ANIMAL,
+    //     DISEASE;
+    // };
 
-} node_type;
+    bool Discovered;
+    //pointers to all of the surroundingnodes
+    struct LinkedList *right;
+    struct LinkedList *left;
+    struct LinkedList *up;
+    struct LinkedList *down;
+ } *node; //Define node as pointer of data type struct Node
 
-// struct node of linked list 
-// struct Node { 
-//     int data; 
-//     *right;
-//     *down;
-//     *left;
-//     *up; 
-// }; 
+//typedef struct Node *node; //Define node as pointer of data type struct Node
 
+node createNode(){
+    node temp; // declare a node
+    temp = (node)malloc(sizeof(struct Node)); // allocate memory using malloc()
+    temp->right = NULL;// make next point to NULL
+    temp->left  = NULL;
+    temp->up    = NULL;
+    temp->down  = NULL;
+    return temp;//return the new node
+}
+
+node addNode(node head, char value){
+    node temp, p;// declare two nodes temp and p
+    temp = createNode();//createNode will return a new node with data = value and next pointing to NULL.
+    temp->tile = value; // add element's value to data part of node
+    if(head == NULL){
+        head = temp;     //when linked list is empty set the first node as head
+    }
+    else{
+        p  = head; //assign head to p 
+        while(p->right != NULL){
+            p = p->right;//traverse the list until p is the last node.The last node always points to NULL.
+        }
+        p->right = temp;//Point the previous last node to the new node created.
+        temp->left = p;
+    }
+    return head;
+}
 
 //TODO: helper functions
 //AddNode
 //FreeNode
 
-struct LinkedList{
-    int data;
-
-    struct LinkedList *next;
-    struct LinkedList *start;   //need a pointer pointing toward the start node
-    struct LinkedList *end;     //need a pointer pointing toward the end node
-
- };
 
 // Function for finding the matrixSize 
 int lineSize(FILE *mapData) {  
@@ -68,19 +93,43 @@ void LoadMap(char *fileName) {
         exit(1);
     }
 
-    int i,j;
     int health = 0;
     int matrixSize = lineSize(MapData); //grabbing the size to allocate memory
-    printf("%d", matrixSize);
-    char *map;
-    map = malloc(matrixSize * sizeof(char) + 17); //dynamically allocating memory for the map 
+    printf("%d\n", matrixSize);
+    char map[matrixSize][matrixSize];
+    //map = malloc(matrixSize * sizeof(char) + 17); //dynamically allocating memory for the map 
 
-    printf("%s\n", map);
-    fscanf(MapData, "%s %d", map, &health); //grbbing the value of health
+    //printf("%s\n", map);
+    fscanf(MapData, "%*s %d", &health); //grbbing the value of health by skipping the first string and intaking the int after it
     printf("Health: ");
     printf("%d\n", health);
 
+    int ch, i, j;
 
+    for (i = 0; i < matrixSize; i++) {
+        for (j = 0; j < matrixSize + 1; j++) {
+            ch = fgetc(MapData); 
+            if(ch == '\n') { //} || (i == matrixSize && j == matrixSize - 1)) {
+                continue;
+            }
+            //printf("%c", ch);
+            map[i][j] = ch;
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    for (i = 0; i < matrixSize; i++) {
+        for (j = 0; j <= matrixSize; j++) {
+                        if(ch == '\n' || (i == matrixSize && j == matrixSize - 1)) {
+                continue;
+            }
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 
 
 
