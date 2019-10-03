@@ -4,62 +4,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "Assignment1functions.h"
-
-
-typedef struct Node{ //defining the linked list
-    char tile;
-    int x_pos, y_pos;
-    enum type_threat { //enumerating all of the possible threat types
-        ANIMAL,
-        DISEASE,
-        RIVER,
-        NOTHING,
-        OCEAN
-    } type_threat;
-
-    // union threat { //creating a union called threat of animals and disease
-    //     ANIMAL,
-    //     DISEASE;
-    // };
-
-    bool Discovered;
-    //pointers to all of the surroundingnodes
-    struct LinkedList *right;
-    struct LinkedList *left;
-    struct LinkedList *up;
-    struct LinkedList *down;
- } *node; //Define node as pointer of data type struct Node
-
-//typedef struct Node *node; //Define node as pointer of data type struct Node
-
-node createNode(){
-    node temp; // declare a node
-    temp = (node)malloc(sizeof(struct Node)); // allocate memory using malloc()
-    temp->right = NULL;// make next point to NULL
-    temp->left  = NULL;
-    temp->up    = NULL;
-    temp->down  = NULL;
-    return temp;//return the new node
-}
-
-node addNode(node head, char value){
-    node temp, p;// declare two nodes temp and p
-    temp = createNode();//createNode will return a new node with data = value and next pointing to NULL.
-    temp->tile = value; // add element's value to data part of node
-    if(head == NULL){
-        head = temp;     //when linked list is empty set the first node as head
-    }
-    else{
-        p  = head; //assign head to p 
-        while(p->right != NULL){
-            p = p->right;//traverse the list until p is the last node.The last node always points to NULL.
-        }
-        p->right = temp;//Point the previous last node to the new node created.
-        temp->left = p;
-    }
-    return head;
-}
-
 //TODO: helper functions
 //AddNode
 //FreeNode
@@ -80,6 +24,74 @@ int lineSize(FILE *mapData) {
   rewind(mapData);
 
   return count;
+}
+
+NODE_t* create_node(char display_char, int x, int y) {
+    NODE_t node;
+    node.XLocation = x;
+    node.YLocation = y;
+    node.discovered = '0';
+    printf("%d", node.XLocation);
+    printf("%d", node.YLocation);
+    printf("\n");
+    // node.right  = x+1;
+    // node.left   = x-1;
+    // node.up     = y+1;
+    // node.down   = y-1;
+}
+
+NODE_t* find_node(NODE_t* head, int x, int y) {
+    ;
+}
+
+NODE_t* create_map(char *map, int n) {
+    
+}
+
+void free_map(NODE_t *head) {
+    
+}
+
+void print_node(NODE_t* node) {
+    
+}
+
+void print_map(NODE_t* head) {
+    
+}
+
+NODE_t* create_viewport(NODE_t *map_head) {
+    
+}
+
+ANIMAL_t make_animal(char display_char) {
+    ANIMAL_t animal;
+    switch(display_char) {
+        case 'G':
+            animal.display_char = 'G';
+            animal.health_mod = -10;
+            break;
+        case 'B':
+            animal.display_char = 'B';
+            animal.health_mod = -5;
+            break;
+        case 'H':
+            animal.display_char = 'H';
+            animal.health_mod = 5;
+            break;
+        case 'E':
+            animal.display_char = 'E';
+            animal.health_mod = 10;
+            break;
+
+        default:
+            animal.display_char = 'U';
+            animal.health_mod = 0;
+            break;
+    }
+
+    return animal;
+    ;
 }
 
 void LoadMap(char *fileName) {
@@ -104,36 +116,36 @@ void LoadMap(char *fileName) {
     printf("Health: ");
     printf("%d\n", health);
 
-    int ch, i, j;
+    int x, y;
+    char ch;
 
-    for (i = 0; i < matrixSize; i++) {
-        for (j = 0; j < matrixSize + 1; j++) {
+    for (x = 0; x < matrixSize; x++) {
+        for (y = 0; y < matrixSize + 1; y++) {
             ch = fgetc(MapData); 
             if(ch == '\n') { //} || (i == matrixSize && j == matrixSize - 1)) {
                 continue;
             }
             //printf("%c", ch);
-            map[i][j] = ch;
-            printf("%c", map[i][j]);
+            map[x][y] = ch;
+            printf("%c", map[x][y]);
+            create_node(ch, x, y - 1); //creating the nodes one at a time
         }
         printf("\n");
     }
-    printf("\n");
+    // printf("\n");
 
-    for (i = 0; i < matrixSize; i++) {
-        for (j = 0; j <= matrixSize; j++) {
-                        if(ch == '\n' || (i == matrixSize && j == matrixSize - 1)) {
-                continue;
-            }
-            printf("%c", map[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-
-
-
+    // for (i = 0; i < matrixSize; i++) {
+    //     for (j = 0; j <= matrixSize; j++) {
+    //                     if(ch == '\n' || (i == matrixSize && j == matrixSize - 1)) {
+    //             continue;
+    //         }
+    //         printf("%c", map[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
     fclose(MapData); //closing the file
+
 }
 
 void printCurrentLocation() {
@@ -143,6 +155,17 @@ void printCurrentLocation() {
 void GameStart(char *fileName) {
     printf("Loading Map.....\n");
     LoadMap(fileName);
+
+    CHOICE_e pick_direction();
+}
+
+void Instructions() {
+    printf("\n\nThe game you are about to play is called Oregon Trail!");
+    printf("\nYou move using the keys\n'U'(UP)\n'D'(DOWN)\n'L'(LEFT)\n'R'(RIGHT)");
+    printf("\nYou will have to move through the map and discover what awaits!");
+    printf("\nThere are a few different tiles that you can land on!");
+    printf("");
+    StartMenu();
 }
 
 //Gives user a basic start menu and prompts for an input
@@ -170,16 +193,16 @@ int StartMenu() {
         case 2:
             //chose instructions
             printf("\nInstructions\n");
-            return 2;
+            Instructions();
             break;
         case 3:
             //end the game
             printf("\nEnd Game\n");
-            return 3;
+            exit(1);
             break;
         default:
             printf("\nThat's not a valid input, sorry you never learned how to read!\n\n\n");
-            return 3;
+            exit(1);
             break;
     }
     return 0;
