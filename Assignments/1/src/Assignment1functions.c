@@ -7,6 +7,30 @@
 //TODO: helper functions
 //AddNode
 //FreeNode
+static int health = 0;
+static int size = 0;
+static NODE_t *begin;
+static NODE_t *finish;
+static NODE_t *head;
+static NODE_t **array;
+
+void GameStart(char *fileName) {
+    printf("Loading Map.....\n");
+    CHOICE_e choice;
+
+    char *map;
+    //NODE_t *map = create_map(map)
+    LoadMap(fileName);
+    printf("%d", head->right);
+    //print_viewport(*viewport);
+
+    // while(head->XLocation != finish->XLocation && head->YLocation != finish->YLocation) {
+    //     //print_viewport(viewport);
+    //     choice = pick_direction();
+    //     //check_node(choice, map, viewport);
+    //     //confirm_choice(threat_type, threat)
+    // }
+}
 
 
 // Function for finding the matrixSize 
@@ -27,42 +51,108 @@ int lineSize(FILE *mapData) {
 }
 
 NODE_t* create_node(char display_char, int x, int y) {
-    NODE_t node;
-    node.XLocation = x;
-    node.YLocation = y;
-    node.discovered = '0';
-    printf("%d", node.XLocation);
-    printf("%d", node.YLocation);
+
+    NODE_t *node;
+    head = calloc(1,1 * sizeof head);
+
+    node = calloc(1, 1 * sizeof node);
+
+    //NODE_t **array = (NODE_t **)calloc(size * size, sizeof(NODE_t *));
+
+    printf("\nNode type: ");
+    //a few if statements to change node type and threat 
+    if(display_char == 'E' || display_char == 'H' || display_char == 'B' || display_char == 'G'){
+        node->type = ANIMAL;
+        node->threat.animal = make_animal(display_char);
+        printf("display_char: ");
+        printf("%c", node->threat.animal.display_char);
+    }
+    else if(display_char == 'D' || display_char == 'C' || display_char == 'F') {
+        node->type = DISEASE;
+        node->threat.disease = make_disease(display_char);
+        printf("display_char: ");
+        printf("%c", node->threat.disease.display_char);
+    }
+    else if (display_char == 'R') {
+        printf("display_char: ");
+        printf("%c", display_char);
+        node->type = RIVER;
+    }
+    else if (x == 0 && y == 0){
+        printf("display_char: ");
+        printf("%c", display_char);
+        node->type = PLAYER;
+    }
+    else if (y == size-1 && x == size-1) {
+        printf("display_char: ");
+        printf("%c", display_char);
+        node->type = GOAL;
+    }
+    else if (display_char == 'N') {
+        printf("display_char: ");
+        printf("%c", display_char);
+        node->type = NOTHING;
+    }
+    else if (x > size || y > size) {
+        printf("display_char: ");
+        printf("%c", '=');
+        node->type = OCEAN;
+    }
+
+    //assigning the node's x and y location
+    node->XLocation = x;
+    node->YLocation = y;
+    node->discovered = 0;
+    // node->display_char =
+    printf("%d", node->XLocation);
+    printf("%d", node->YLocation);
     printf("\n");
-    // node.right  = x+1;
-    // node.left   = x-1;
-    // node.up     = y+1;
-    // node.down   = y-1;
+    // node->right  = NULL;
+    // node->left   = NULL;
+    // node->up     = NULL;
+    // node->down   = NULL;
+    if(x == 0 & y == 0) {
+        head->right = node;
+    }
+    return node;
 }
 
 NODE_t* find_node(NODE_t* head, int x, int y) {
-    ;
+    printf("find node");
 }
 
-NODE_t* create_map(char *map, int n) {
-    
+NODE_t* create_map(char *map) {
+    printf("Create Node Map");
+    NODE_t *head;
+
 }
 
 void free_map(NODE_t *head) {
-    
+    printf("print map");
 }
 
-void print_node(NODE_t* node) {
-    
-}
+// void print_node(NODE_t* node) {
+//     int i, j;
+//     for(i = 0; i < size; i++) {
+//         for(j = 0; j < size; j++) {
+//             if(head->type == PLAYER) {
+//                 printf("%c", "X");
+//             }
+//         }
+//     }
+// }
 
 void print_map(NODE_t* head) {
-    
+    printf("print map");
 }
 
 NODE_t* create_viewport(NODE_t *map_head) {
     
 }
+// void move_up(NODE_t *map, NODE_t** viewport) {}
+// void move_down(NODE_t *map, NODE_t** viewport) {}
+// void move_left(NODE_t *map, NODE_t** viewport) {}
+// void move_right(NODE_t *map, NODE_t** viewport) {}
 
 ANIMAL_t make_animal(char display_char) {
     ANIMAL_t animal;
@@ -89,15 +179,33 @@ ANIMAL_t make_animal(char display_char) {
             animal.health_mod = 0;
             break;
     }
-
     return animal;
-    ;
+}
+
+DISEASE_t make_disease(char display_char) {
+    DISEASE_t disease;
+    switch(display_char) {
+        case 'D':
+            disease.display_char = 'D';
+            disease.health_mod = -15;
+            break;
+        case 'F':
+            disease.display_char = 'F';
+            disease.health_mod = -10;
+            break;
+        case 'C':
+            disease.display_char = 'C';
+            disease.health_mod = -10;
+            break;
+        default:
+            disease.display_char = 'U';
+            disease.health_mod = 0;
+            break;
+    }
+    return disease;
 }
 
 void LoadMap(char *fileName) {
-    
-    //printf("%s", Filename);
-
     FILE* MapData = fopen(fileName, "r" );
     if (MapData == NULL){
         printf("Error! opening file");
@@ -105,13 +213,13 @@ void LoadMap(char *fileName) {
         exit(1);
     }
 
-    int health = 0;
-    int matrixSize = lineSize(MapData); //grabbing the size to allocate memory
-    printf("%d\n", matrixSize);
-    char map[matrixSize][matrixSize];
-    //map = malloc(matrixSize * sizeof(char) + 17); //dynamically allocating memory for the map 
+    size = lineSize(MapData); //grabbing the size to allocate memory
+    printf("%d\n", size);
+    //char *map;
+    //map = calloc(1, size * sizeof(char)); //dynamically allocating memory for the map 
 
-    //printf("%s\n", map);
+
+    //grbbing the value of health by skipping the first string and intaking the int after it
     fscanf(MapData, "%*s %d", &health); //grbbing the value of health by skipping the first string and intaking the int after it
     printf("Health: ");
     printf("%d\n", health);
@@ -119,45 +227,36 @@ void LoadMap(char *fileName) {
     int x, y;
     char ch;
 
-    for (x = 0; x < matrixSize; x++) {
-        for (y = 0; y < matrixSize + 1; y++) {
+    NODE_t **array = (NODE_t **)calloc(size * size, sizeof(NODE_t *));
+
+    for (x = 0; x < size; x++) {
+        for (y = 0; y < size + 1; y++) {
             ch = fgetc(MapData); 
-            if(ch == '\n') { //} || (i == matrixSize && j == matrixSize - 1)) {
+            if(ch == '\n') { //telling it to skip end line 
                 continue;
             }
             //printf("%c", ch);
-            map[x][y] = ch;
-            printf("%c", map[x][y]);
-            create_node(ch, x, y - 1); //creating the nodes one at a time
+            //map[x][y] = ch;
+            //printf("%c", map[x][y]);
+            printf("\nCreating Node:");
+            // if(x == 0 && y == 0) {
+            //     head = create_node(ch, x, y);
+            // }
+            // else {
+            //     create_node(ch, x, y); //creating the nodes one at a time
+            // }
+            *array = create_node(ch, x, y - 1);
         }
         printf("\n");
     }
-    // printf("\n");
 
-    // for (i = 0; i < matrixSize; i++) {
-    //     for (j = 0; j <= matrixSize; j++) {
-    //                     if(ch == '\n' || (i == matrixSize && j == matrixSize - 1)) {
-    //             continue;
-    //         }
-    //         printf("%c", map[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
     fclose(MapData); //closing the file
-
+    //return map;  //returning array of chars
 }
 
-void printCurrentLocation() {
-
-}
-
-void GameStart(char *fileName) {
-    printf("Loading Map.....\n");
-    LoadMap(fileName);
-
-    CHOICE_e pick_direction();
-}
+// void print_viewport(NODE_t *viewport) {
+//     printf("viewport print");
+// }
 
 void Instructions() {
     printf("\n\nThe game you are about to play is called Oregon Trail!");
@@ -206,4 +305,39 @@ int StartMenu() {
             break;
     }
     return 0;
+}
+
+CHOICE_e pick_direction() {
+    char input;
+    scanf("%c", &input);
+
+    switch(input) {
+        case 'u':
+            //go up
+            return UP;
+            break;
+        case 'l':
+            //go left
+            return LEFT;
+            break;
+        case 'r':
+            //go right
+            return RIGHT;
+            break;
+        case 'd':
+            //go down
+            return DOWN;
+            break;
+        case 'y':
+            //yes
+            return YES;
+            break;
+        case 'n':
+            //no
+            return NO;
+            break;
+        default:
+            return NO;
+            break;
+    }
 }
