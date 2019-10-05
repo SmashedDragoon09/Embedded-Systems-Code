@@ -7,18 +7,20 @@
 #include "a1_defs.h"
 
 int StartMenu();
+int lineSize(FILE* mapData);
 void Instructions();
 void GameStart(char *fileName);
-void LoadMap(char *fileName);
+FILE* LoadMap(char *fileName);
 int numOfLines(FILE *filename);
+NODE_t** ParseFile(FILE* MapData, NODE_t** array);
 void viewPort(); //TODO implement a method to print current location in a 3x3 matrix
 
 //code from instructor
 ANIMAL_t make_animal(char display_char);
 DISEASE_t make_disease(char display_char);
 NODE_t* create_node(char display_char, int x, int y);
-NODE_t* find_node(NODE_t* head, int x, int y);
-NODE_t* create_map(char *map);
+NODE_t* find_node(int x, int y);
+NODE_t* create_map(NODE_t **array);
 void free_map(NODE_t *head);
 void print_node(NODE_t* node);
 void print_map(NODE_t* head);
